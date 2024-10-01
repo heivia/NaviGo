@@ -20,7 +20,7 @@ import com.csit321.NaviGo.Service.VisitorImgService;
 
 @RestController
 @RequestMapping("/image")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://citsecure-frontend.onrender.com")
 public class VisitorImgController {
     @Autowired
     private VisitorImgService visitorImgService;
