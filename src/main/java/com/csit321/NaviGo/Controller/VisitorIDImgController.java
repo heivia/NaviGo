@@ -1,7 +1,6 @@
 package com.csit321.NaviGo.Controller;
  
 import java.io.IOException;
- 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -16,29 +15,32 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
  
-import com.csit321.NaviGo.Service.VisitorImgService;
+import com.csit321.NaviGo.Service.VisitorIDImgService;
  
 @RestController
 @RequestMapping("/image")
 @CrossOrigin(origins = "https://citsecure-frontend.onrender.com")
-public class VisitorImgController {
-    @Autowired
-    private VisitorImgService visitorImgService;
+public class VisitorIDImgController {
  
-    @PostMapping("/uploadVisitorImg")
-    public ResponseEntity<String> uploadVisitorImg(@RequestParam("file") MultipartFile file, 
-                                                   @RequestParam("cardNo") String cardNo, 
-                                                   @RequestParam("timeIn") String timeIn) {
+    @Autowired
+    private VisitorIDImgService visitorIDImgService;
+ 
+    // Upload Visitor ID image
+    @PostMapping("/uploadIDImg")
+    public ResponseEntity<String> uploadIDImg(@RequestParam("file") MultipartFile file, 
+                                              @RequestParam("cardNo") String cardNo,
+                                              @RequestParam("date") String date) { // Only date now
         if (file.isEmpty() || !isValidImage(file)) {
             return ResponseEntity.badRequest().body("Invalid file");
         }
  
-        // Sanitize inputs
-        String sanitizedTimeIn = timeIn.replaceAll("[:\\s]", "_").replaceAll("(AM|PM)", "");
+        // Sanitize the inputs
         String sanitizedCardNo = cardNo.replaceAll("[^a-zA-Z0-9]", "_");
+        String sanitizedDate = date.replaceAll("[:\\s]", "_");  // Format date if necessary
  
         try {
-            String filePath = visitorImgService.saveImage(file, sanitizedCardNo, sanitizedTimeIn);
+            String filePath = visitorIDImgService.saveImage(file, sanitizedCardNo, sanitizedDate);
+            System.out.println("Image successfully saved at: " + filePath);  // Logging the saved path
             return ResponseEntity.ok("Image saved at: " + filePath);
         } catch (IOException e) {
             e.printStackTrace();
@@ -46,23 +48,27 @@ public class VisitorImgController {
         }
     }
  
-    @GetMapping("/getVisitorImg/{cardNo}/{timeIn}")
-    public ResponseEntity<Resource> getVisitorImg(@PathVariable String cardNo, 
-                                                  @PathVariable String timeIn) {
-        try {
-            // Sanitize inputs
-            String sanitizedTimeIn = timeIn.replaceAll("[:\\s]", "_").replaceAll("(AM|PM)", "");
-            String sanitizedCardNo = cardNo.replaceAll("[^a-zA-Z0-9]", "_");
  
-            Resource file = visitorImgService.loadImage(sanitizedCardNo, sanitizedTimeIn);
+    // Get Visitor ID image
+    @GetMapping("/getIDImg/{cardNo}/{date}")
+    public ResponseEntity<Resource> getIDImg(@PathVariable String cardNo, @PathVariable String date) {
+        try {
+            String sanitizedCardNo = cardNo.replaceAll("[^a-zA-Z0-9]", "_");
+            String sanitizedDate = date.replaceAll("[:\\s]", "_");  // Ensure date format consistency
+ 
+            Resource file = visitorIDImgService.loadImage(sanitizedCardNo, sanitizedDate);
+            System.out.println("Image found: " + file.getFilename());  // Log the loaded file name
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
                     .body(file);
         } catch (IOException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
  
+ 
+    // Utility function to check if uploaded file is a valid image
     private boolean isValidImage(MultipartFile file) {
         String contentType = file.getContentType();
         return contentType != null && (contentType.equals("image/jpeg") || contentType.equals("image/png"));
