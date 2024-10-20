@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend Checker</title>
+    <script>
+        // Function to ping the backend every 5 minutes
+        function pingBackend() {
+            const url = 'https://cit-secure-backend.onrender.com/wakebackend';  // Replace with your backend URL
+
+            fetch(url)
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Backend is awake');
+                    } else {
+                        console.error('Error pinging backend:', response.statusText);
+                    }
+                })
+                .catch(error => {
+                    console.error('Request failed:', error);
+                });
+        }
+
+        // Ping the backend when the page loads
+        window.onload = () => {
+            pingBackend();
+            // Ping every 5 minutes (300000ms)
+            setInterval(pingBackend, 300000);
+        };
+    </script>
+</head>
+<body>
+    <h1>Hello World</h1>
+    <p>This page is used to keep the backend awake.</p>
+    <p>This page will ping the backend for 5 mins.</p>
+</body>
+</html>
