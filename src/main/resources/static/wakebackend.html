@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keep Backend Awake</title>
+</head>
+<body>
+    <h1>Hello World</h1>
+    <p>This page is used to keep the backend awake.</p>
+    <p>This page will ping the backend for 5 mins.</p>
+    <script>
+        // Set up a timer to make a request every 5 minutes (300,000 milliseconds)
+        setInterval(() => {
+            fetch('https://cit-secure-backend.onrender.com/wakebackend')
+                .then(response => response.ok ? console.log('Ping successful') : console.log('Ping failed'))
+                .catch(error => console.error('Error pinging backend:', error));
+        }, 300000); // 5 minutes
+    </script>
+</body>
+</html>
