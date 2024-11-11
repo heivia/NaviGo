@@ -31,7 +31,7 @@ public class VisitorController {
     public ResponseEntity<VisitorEntity> addVisitor(@RequestBody VisitorEntity visitor) {
         // Log the visitor object to check field mapping
         System.out.println("Visitor received: " + visitor);
-        System.out.println("Selected Gate: " + visitor.getSelectedGate());  
+        System.out.println("Selected Gate: " + visitor.getSelectedGate());
         System.out.println("Office Visited: " + visitor.getOfficeVisited());  // Log office visited for debugging
 
         // Call the service to add visitor with generated card number and save it to the database
@@ -39,7 +39,6 @@ public class VisitorController {
 
         return ResponseEntity.ok(addedVisitor);
     }
-
 
     // Get the next card number
     @GetMapping("/nextCardNumber")
@@ -77,10 +76,9 @@ public class VisitorController {
         }
     }
 
-
     // Utility method to format date and time
     private String formatDateTime(LocalDateTime dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a dd/MM/yyyy");
-        return dateTime.format(formatter);
+        return dateTime.format(formatter).toUpperCase();  // Ensure AM/PM is in uppercase
     }
 }
