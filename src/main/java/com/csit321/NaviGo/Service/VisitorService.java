@@ -22,11 +22,10 @@ public class VisitorService {
             maxCardNo = 0; // Start from card number 1 if no previous visitors exist
         }
         visitor.setCardNo(maxCardNo + 1);
-        
+
         // Save visitor with all fields including officeVisited
         return visitorRepository.save(visitor);
     }
-
 
     // Get all visitors
     public List<VisitorEntity> getAllVisitors() {
@@ -46,22 +45,17 @@ public class VisitorService {
 
     // Update visitor's timeOut and mark status as logged out
     public VisitorEntity updateVisitor(VisitorEntity visitor) {
+        // Set the formatted time-out value to ensure "PM" format matches time-in
+        String formattedTimeOut = formatDateTime(LocalDateTime.now());
+        visitor.setTimeOut(formattedTimeOut);
+
+        visitor.setStatus(0); // Set status to indicate the visitor has exited
         return visitorRepository.save(visitor); // Save the updated visitor entity to the database
     }
 
-    // Generate the next card number
-    public int generateCardNumber() {
-        Integer maxCardNo = visitorRepository.findMaxCardNo();
-        if (maxCardNo == null) {
-            return 1; // Start from card number 1 if no previous visitors exist
-        }
-        return maxCardNo + 1; // Increment the max card number by 1
-    }
-
-    // Helper method to format date and time for timeOut
-    private String formatDateTime(String timeOut) {
-        LocalDateTime currentTime = LocalDateTime.now();
+    // Utility method to format date and time for timeOut
+    private String formatDateTime(LocalDateTime dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a dd/MM/yyyy");
-        return currentTime.format(formatter);
+        return dateTime.format(formatter).toUpperCase();  // Ensure AM/PM is in uppercase
     }
 }
