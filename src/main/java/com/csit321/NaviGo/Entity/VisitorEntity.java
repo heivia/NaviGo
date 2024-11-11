@@ -35,6 +35,9 @@ public class VisitorEntity {
 
     @Column(name = "office_visited")
     private String officeVisited;
+    
+    @Column(name = "assigned_person")
+    private String assignedPerson;
 
     @Column(name = "status")
     private int status;
@@ -117,6 +120,14 @@ public class VisitorEntity {
 
     public void setOfficeVisited(String officeVisited) {
         this.officeVisited = officeVisited;
+    }
+    
+    public String getassignedPerson() {
+        return assignedPerson;
+    }
+
+    public void setassignedPerson(String assignedPerson) {
+        this.assignedPerson = assignedPerson;
     }
 
     public int getStatus() {
