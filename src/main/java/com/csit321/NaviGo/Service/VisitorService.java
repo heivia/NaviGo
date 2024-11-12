@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -55,7 +57,8 @@ public class VisitorService {
 
     // Utility method to format date and time for timeOut
     private String formatDateTime(LocalDateTime dateTime) {
+        ZonedDateTime zonedDateTime = dateTime.atZone(ZoneId.of("Asia/Manila")); // Replace with your timezone
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a dd/MM/yyyy");
-        return dateTime.format(formatter).toUpperCase();  // Ensure AM/PM is in uppercase
+        return zonedDateTime.format(formatter).toUpperCase();  // Ensure AM/PM is in uppercase
     }
 }
