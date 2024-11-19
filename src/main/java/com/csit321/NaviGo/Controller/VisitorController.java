@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +16,7 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/visitor")
-@CrossOrigin(origins = "https://citsecure-frontend.onrender.com")
+@CrossOrigin(origins = "http://localhost:3000")
 public class VisitorController {
 
     @Autowired
@@ -76,9 +78,11 @@ public class VisitorController {
         }
     }
 
-    // Utility method to format date and time
+    // Utility method to format date and time with GMT+8 timezone
     private String formatDateTime(LocalDateTime dateTime) {
+        // Convert to GMT+8 timezone (Asia/Manila)
+        ZonedDateTime zonedDateTime = dateTime.atZone(ZoneId.of("Asia/Manila"));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a dd/MM/yyyy");
-        return dateTime.format(formatter).toUpperCase();  // Ensure AM/PM is in uppercase
+        return zonedDateTime.format(formatter).toUpperCase();  // Ensure AM/PM is in uppercase
     }
 }
