@@ -65,14 +65,14 @@ public class VisitorController {
  // Update visitor's time out based on card number
     @PutMapping("/updateVisitorTimeOut/{cardNo}")
     public ResponseEntity<String> updateVisitorTimeOut(@PathVariable("cardNo") int cardNo) {
-        // Get current time in the desired timezone
+        // Get the current time in the correct timezone
         LocalDateTime currentTime = LocalDateTime.now(ZoneId.of("Asia/Manila"));
-        String formattedTimeOut = formatDateTime(currentTime); // Already converts to proper format
+        String formattedTimeOut = formatDateTime(currentTime); // Format the time for display/storage
 
         VisitorEntity visitor = visitorService.findVisitorByCardNo(cardNo);
         if (visitor != null && visitor.getStatus() == 1) {
-            visitor.setTimeOut(formattedTimeOut);  // Set the formatted time-out
-            visitor.setStatus(0);  // Set status to indicate the visitor has exited
+            visitor.setTimeOut(formattedTimeOut); // Save the formatted time-out
+            visitor.setStatus(0); // Mark the visitor as logged out
             visitorService.updateVisitor(visitor);
             return ResponseEntity.ok("Time-out updated successfully");
         } else {
@@ -87,3 +87,4 @@ public class VisitorController {
         return zonedDateTime.format(formatter).toUpperCase(); // Ensure AM/PM is in uppercase
     }
 }
+
