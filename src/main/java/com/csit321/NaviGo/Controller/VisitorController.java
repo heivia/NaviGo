@@ -7,8 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
-import java.time.ZoneId;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/visitor")
-@CrossOrigin(origins = "https://citsecure-frontend.onrender.com/")
+@CrossOrigin(origins = "https://citsecure-frontend.onrender.com")
 public class VisitorController {
 
     @Autowired
@@ -63,15 +63,30 @@ public class VisitorController {
 
  // Update visitor's time-out based on card number
     @PutMapping("/updateVisitorTimeOut/{cardNo}")
-    public ResponseEntity<String> updateVisitorTimeOut(@PathVariable("cardNo") int cardNo) {
-        // Adjust to GMT+8
-        LocalDateTime currentTimeInGMT8 = LocalDateTime.now(java.time.ZoneId.of("Asia/Singapore"));
-        String formattedTimeOut = formatDateTime(currentTimeInGMT8);
+    public ResponseEntity<String> updateVisitorTimeOut(
+            @PathVariable("cardNo") int cardNo, 
+            @RequestBody Map<String, Object> requestBody) {
+        
+        // Extract the time-out value from the request body
+        String timeOutFromRequest = (String) requestBody.get("timeOut");
 
+        // Parse and adjust the provided time-out value if needed
+        LocalDateTime parsedTimeOut;
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a dd/MM/yyyy");
+            parsedTimeOut = LocalDateTime.parse(timeOutFromRequest, formatter)
+                                          .atZone(ZoneId.of("Asia/Singapore"))
+                                          .toLocalDateTime();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Invalid time-out format");
+        }
+
+        // Retrieve the visitor record
         VisitorEntity visitor = visitorService.findVisitorByCardNo(cardNo);
         if (visitor != null && visitor.getStatus() == 1) {
-            visitor.setTimeOut(formattedTimeOut);  // Set the formatted time-out
-            visitor.setStatus(0);  // Set status to indicate the visitor has exited
+            // Update the visitor record
+            visitor.setTimeOut(parsedTimeOut.format(DateTimeFormatter.ofPattern("hh:mm a dd/MM/yyyy")));
+            visitor.setStatus(0);  // Mark the visitor as logged out
             visitorService.updateVisitor(visitor);
             return ResponseEntity.ok("Time-out updated successfully");
         } else {
