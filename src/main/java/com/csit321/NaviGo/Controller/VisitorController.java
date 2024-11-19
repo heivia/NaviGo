@@ -7,8 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +14,7 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/visitor")
-@CrossOrigin(origins = "https://citsecure-frontend.onrender.com")
+@CrossOrigin(origins = "https://citsecure-frontend.onrender.com/")
 public class VisitorController {
 
     @Autowired
@@ -61,11 +59,12 @@ public class VisitorController {
         return ResponseEntity.status(404).body(null);
     }
 
-    // Update visitor's time-out based on card number
+ // Update visitor's time-out based on card number
     @PutMapping("/updateVisitorTimeOut/{cardNo}")
     public ResponseEntity<String> updateVisitorTimeOut(@PathVariable("cardNo") int cardNo) {
-        LocalDateTime currentTime = LocalDateTime.now();
-        String formattedTimeOut = formatDateTime(currentTime);
+        // Adjust to GMT+8
+        LocalDateTime currentTimeInGMT8 = LocalDateTime.now(java.time.ZoneId.of("Asia/Singapore"));
+        String formattedTimeOut = formatDateTime(currentTimeInGMT8);
 
         VisitorEntity visitor = visitorService.findVisitorByCardNo(cardNo);
         if (visitor != null && visitor.getStatus() == 1) {
@@ -78,11 +77,10 @@ public class VisitorController {
         }
     }
 
-    // Utility method to format date and time with GMT+8 timezone
+
+    // Utility method to format date and time
     private String formatDateTime(LocalDateTime dateTime) {
-        // Convert to GMT+8 timezone (Asia/Manila)
-        ZonedDateTime zonedDateTime = dateTime.atZone(ZoneId.of("Asia/Manila"));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a dd/MM/yyyy");
-        return zonedDateTime.format(formatter).toUpperCase();  // Ensure AM/PM is in uppercase
+        return dateTime.format(formatter).toUpperCase();  // Ensure AM/PM is in uppercase
     }
 }
