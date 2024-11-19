@@ -57,7 +57,8 @@ public class VisitorService {
 
     // Utility method to format date and time for timeOut
     private String formatDateTime(LocalDateTime dateTime) {
-        ZonedDateTime zonedDateTime = dateTime.atZone(ZoneId.of("Asia/Manila")); // Replace with your timezone
+        // Convert to GMT+8 timezone (Asia/Manila)
+        ZonedDateTime zonedDateTime = dateTime.atZone(ZoneId.of("Asia/Manila"));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a dd/MM/yyyy");
         return zonedDateTime.format(formatter).toUpperCase();  // Ensure AM/PM is in uppercase
     }
