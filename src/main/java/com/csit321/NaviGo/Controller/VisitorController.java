@@ -16,7 +16,7 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/visitor")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://citsecure-frontend.onrender.com")
 public class VisitorController {
 
     @Autowired
