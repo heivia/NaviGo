@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -60,12 +62,12 @@ public class VisitorController {
         return ResponseEntity.status(404).body(null);
     }
 
- // Update visitor's time-out based on card number
+ // Update visitor's time out based on card number
     @PutMapping("/updateVisitorTimeOut/{cardNo}")
     public ResponseEntity<String> updateVisitorTimeOut(@PathVariable("cardNo") int cardNo) {
-        // Adjust to GMT+8
-        LocalDateTime currentTimeInGMT8 = LocalDateTime.now(java.time.ZoneId.of("Asia/Singapore"));
-        String formattedTimeOut = formatDateTime(currentTimeInGMT8);
+        // Get current time in the desired timezone
+        LocalDateTime currentTime = LocalDateTime.now(ZoneId.of("Asia/Manila"));
+        String formattedTimeOut = formatDateTime(currentTime); // Already converts to proper format
 
         VisitorEntity visitor = visitorService.findVisitorByCardNo(cardNo);
         if (visitor != null && visitor.getStatus() == 1) {
@@ -79,9 +81,9 @@ public class VisitorController {
     }
 
 
-    // Utility method to format date and time
     private String formatDateTime(LocalDateTime dateTime) {
+        ZonedDateTime zonedDateTime = dateTime.atZone(ZoneId.of("Asia/Manila"));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a dd/MM/yyyy");
-        return dateTime.format(formatter).toUpperCase();  // Ensure AM/PM is in uppercase
+        return zonedDateTime.format(formatter).toUpperCase(); // Ensure AM/PM is in uppercase
     }
 }
