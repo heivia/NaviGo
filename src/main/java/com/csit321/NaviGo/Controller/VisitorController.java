@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/visitor")
-@CrossOrigin(origins = "https://citsecure-frontend.onrender.com")
+@CrossOrigin(origins = "http://localhost:3000")
 public class VisitorController {
 
     @Autowired
@@ -59,7 +59,7 @@ public class VisitorController {
         return ResponseEntity.status(404).body(null);
     }
 
-    // Update visitor's time out based on card number
+    // Update visitor's time-out based on card number
     @PutMapping("/updateVisitorTimeOut/{cardNo}")
     public ResponseEntity<String> updateVisitorTimeOut(@PathVariable("cardNo") int cardNo) {
         LocalDateTime currentTime = LocalDateTime.now();
